@@ -1,0 +1,27 @@
+# Virtual environment — never commit this!
+venv/
+
+# API Keys — never commit this!
+.env
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+
+# DuckDB database
+*.duckdb
+*.duckdb.wal
+
+# Data files (too large for Git)
+data/raw/*.csv
+data/processed/*.csv
+data/raw/*.json
+
+# IDE files
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
