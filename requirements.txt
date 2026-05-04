@@ -1,0 +1,15 @@
+# Data & Database
+pandas>=2.0.0
+duckdb>=1.0.0
+
+# AI & LLM Orchestration
+langchain>=0.2.0
+langchain-groq>=0.1.0
+langchain-community>=0.2.0
+
+# UI & Visualization
+streamlit>=1.30.0
+plotly>=5.18.0
+
+# Security & Config
+python-dotenv>=1.0.0
