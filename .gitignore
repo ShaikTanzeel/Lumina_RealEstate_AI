@@ -25,3 +25,13 @@ data/raw/*.json
 # OS files
 .DS_Store
 Thumbs.db
+~$*
+*.tmp
+
+# Excel files (optional, but good to ignore if just for testing)
+*.xlsx
+*.xls
+*.csv
+
+# Engineering Diary
+JOURNAL.md
