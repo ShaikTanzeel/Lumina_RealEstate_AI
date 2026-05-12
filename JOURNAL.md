@@ -64,3 +64,31 @@ Validate core data columns (`procedure_area`, `actual_worth`, `rent_value`) and 
 ### 💡 Lessons Learned
 - **99.6% Consistency:** The math holds up for the area calculation, which gives us high confidence in the geometric and financial data recorded by DLD.
 - **Sample Strategy:** Loading the first 100k rows is enough to spot massive trends without crashing the environment with the full 600MB file.
+
+---
+
+## 📅 2026-05-12 | Day 6: Phase 2 Completion & Config Alignment
+
+### 🎯 Today's Goal
+Finalize the ETL pipeline, align environment configurations, and prepare for AI Agent development.
+
+### ✅ Progress Checklist
+- [x] ETL Pipeline Validated (`pipeline.py`)
+- [x] Database path aligned between `.env` and Python code
+- [x] Git Hygiene: Committed all Phase 2 work (EDA + ETL)
+- [x] `.gitignore` updated to exclude temporary and Excel files
+
+### 🧠 Decisions Made
+| Component | Decision | Rationale |
+| :--- | :--- | :--- |
+| **Config** | Single Source of Truth | Used `python-dotenv` in `pipeline.py` to read `DB_PATH` from `.env`. This prevents hardcoded path mismatches. |
+| **Data Architecture** | Processed Path | Standardized on `data/processed/` for the cleaned DuckDB file to follow the Medallion Architecture (Raw -> Processed). |
+| **Git Hygiene** | Exclude Backups | Chose to keep `pipeline_backup.py` untracked as Git history now serves as the primary backup mechanism. |
+
+### 🛑 Blockers / Challenges
+- **Path Mismatch:** Discovered that `.env` and `pipeline.py` were pointing to different database locations.
+- **Resolution:** Updated both to point to `data/processed/transactions.duckdb`.
+
+### 💡 Lessons Learned
+- **Environment Variables:** Using `.env` files is a professional way to manage paths and secrets, keeping them out of the source code and Git history.
+- **Git Checkpoints:** Committing at the end of a phase provides a "clean slate" and a safety net before starting complex new features like LLM integration.
