@@ -4,6 +4,9 @@ Lumina is an end-to-end data engineering and analytics project built to demonstr
 
 This project synthesizes over **1 Million official Dubai Land Department (DLD) transaction records** with real-time rental listings, turning raw data into actionable investment intelligence through a custom-built Streamlit dashboard.
 
+![Lumina Dashboard Overview](assets/lumina_dashboard.png)
+
+
 ## Engineering Highlights & Technical Decisions
 
 Instead of relying on heavy ORMs or generic out-of-the-box AI wrappers, I focused on building a lean, highly optimized architecture:
