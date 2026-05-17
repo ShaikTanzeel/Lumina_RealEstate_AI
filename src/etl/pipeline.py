@@ -75,6 +75,47 @@ COLUMN_MAPPING = {
 # by simply not including them in COLUMN_MAPPING above.
 
 
+# Master Data Mapping (DLD Official -> Commercial Popular)
+# Bridges the gap between government zoning and popular market search names.
+COMMUNITY_MAPPING = {
+    'marsa dubai': 'dubai marina',
+    'al thanyah fifth': 'jumeirah lake towers (jlt)',
+    'al barsha south fourth': 'jumeirah village circle (jvc)',
+    'burj khalifa': 'downtown dubai',
+    'al warsan first': 'international city',
+    'al hebiah fourth': 'jumeirah village circle (jvc)',
+    'al thanyah third': 'the greens & views',
+    'al thanayah fourth': 'the greens & views',
+    'wadi al safa 5': 'dubailand',
+    'nadd hessa': 'dubai silicon oasis (dso)',
+    'hadaeq sheikh mohammed bin rashid': 'mohammed bin rashid city',
+    'me\'aisem first': 'jumeirah village triangle (jvt)',
+    'wadi al safa 6': 'liwan',
+    'al hebiah fifth': 'damac hills',
+    'al merkadh': 'meydan',
+    'al hebiah third': 'damac hills',
+    'al yelayiss 2': 'al furjan',
+    'al khairan first': 'sobha hartland',
+    'al hebiah first': 'motor city',
+    'al barsha south fifth': 'jumeirah village circle (jvc)',
+    'al barshaa south third': 'arjan',
+    'wadi al safa 2': 'the villa',
+    'wadi al safa 7': 'falcon city of wonders',
+    'madinat al mataar': 'dubai south',
+    'dubai investment park first': 'dubai investment park (dip)',
+    'al yelayiss 1': 'al furjan',
+    'wadi al safa 3': 'arabian ranches',
+    'al thanyah first': 'dubai marina',
+    'nad al shiba first': 'meydan',
+    'al yufrah 2': 'damac hills 2',
+    'al barshaa south second': 'arjan',
+    'dubai investment park second': 'dubai investment park (dip)',
+    'al yufrah 3': 'damac hills 2',
+    'al jadaf': 'al jaddaf',
+    'al wasl': 'city walk'
+}
+
+
 # ============================================================
 # STEP 1: LOAD
 # ============================================================
@@ -98,7 +139,7 @@ def load_raw_data(file_path: Path) -> pd.DataFrame:
 # STEP 2: STANDARDIZE
 # ============================================================
 def standardize(df: pd.DataFrame) -> pd.DataFrame:
-    """Clean strings, cast dates, fix booleans, extract IDs."""
+    """Clean strings, cast dates, fix booleans, extract IDs, and map communities."""
     print("STEP 2: Standardizing...")
 
     # 2a. String cleaning — lowercase + strip whitespace
@@ -107,16 +148,21 @@ def standardize(df: pd.DataFrame) -> pd.DataFrame:
     for col in text_cols:
         df[col] = df[col].str.strip().str.lower()
 
-    # 2b. Date casting
+    # 2b. Master Entity Mapping (DLD name -> Commercial popular name)
+    if "community" in df.columns:
+        df["community"] = df["community"].replace(COMMUNITY_MAPPING)
+        print(f"  ✓ Standardized community names using master dictionary ({len(COMMUNITY_MAPPING)} mappings)")
+
+    # 2c. Date casting
     df["transaction_date"] = pd.to_datetime(df["transaction_date"], errors="coerce")
 
-    # 2c. Boolean fix for parking
+    # 2d. Boolean fix for parking
     # Raw data has mixed types; we normalize to True/False
     df["has_parking"] = df["has_parking"].map(
         {"yes": True, "no": False, "true": True, "false": False, True: True, False: False}
     )
 
-    # 2d. Transaction ID — extract numeric portion
+    # 2e. Transaction ID — extract numeric portion
     # Raw format: "xxx-xxx-xxx-12345" → "12345"
     if "transaction_id" in df.columns:
         df["transaction_id"] = df["transaction_id"].str.split("-").str[-1]
@@ -302,7 +348,7 @@ def print_report(df: pd.DataFrame):
 # MAIN EXECUTION
 # ============================================================
 if __name__ == "__main__":
-    print("\n🚀 Dubai Real Estate ETL Pipeline Starting...\n")
+    print("\n Dubai Real Estate ETL Pipeline Starting...\n")
 
     # Execute the pipeline
     df = load_raw_data(RAW_FILE)

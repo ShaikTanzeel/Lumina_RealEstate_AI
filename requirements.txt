@@ -1,6 +1,7 @@
 # Data & Database
 pandas>=2.0.0
 duckdb>=1.0.0
+tabulate>=0.9.0
 
 # AI & LLM Orchestration
 langchain>=0.2.0

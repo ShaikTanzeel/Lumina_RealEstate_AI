@@ -1,37 +1,53 @@
-# Virtual environment — never commit this!
+# Virtual environment
 venv/
+.venv/
+env/
 
-# API Keys — never commit this!
+# API Keys & Secrets
 .env
+.env.*
+secrets.toml
 
-# Python cache files
+# Python cache & build files
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+dist/
+build/
+*.egg-info/
 
-# DuckDB database
+# DuckDB database (Users should build it via ETL)
 *.duckdb
 *.duckdb.wal
 
-# Data files (too large for Git)
-data/raw/*.csv
+# Large Data files
+data/raw/
 data/processed/*.csv
-data/raw/*.json
-
-# IDE files
-.vscode/
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
-~$*
-*.tmp
-
-# Excel files (optional, but good to ignore if just for testing)
+data/processed/*.parquet
+*.csv
 *.xlsx
 *.xls
-*.csv
 
-# Engineering Diary
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temporary files
+*.tmp
+temp/
+scratch/
+diagnostic.py
+proof.py
+exhaustive_proof.py
+marina_data.py
+coverage_analysis.py
+scratch_test.py
+
+# Personal Engineering Diary (Private)
 JOURNAL.md
