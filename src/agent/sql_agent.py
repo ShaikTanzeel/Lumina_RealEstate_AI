@@ -2,7 +2,7 @@ import os
 import duckdb
 import pandas as pd
 from dotenv import load_dotenv
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from src.agent.llm_engine import LLMEngine
 from src.agent.prompts import SYSTEM_PROMPT, REPORT_PROMPT, FIX_PROMPT
 
@@ -29,6 +29,7 @@ class SQLAgent:
         # We define a 'system' role for rules and a 'user' role for the question
         self.prompt_template = ChatPromptTemplate.from_messages([
             ("system", SYSTEM_PROMPT),
+            MessagesPlaceholder(variable_name="chat_history"),
             ("user", "{question}")
         ])
         
@@ -44,13 +45,18 @@ class SQLAgent:
         self.fix_prompt_template = ChatPromptTemplate.from_template(FIX_PROMPT)
         self.fix_chain = self.fix_prompt_template | self.engine.llm
 
-    def generate_sql(self, question: str) -> str:
+    def generate_sql(self, question: str, chat_history: list = None) -> str:
         """Translates the question into SQL code."""
         print(f"Agent is thinking about: '{question}'...")
+        if chat_history is None:
+            chat_history = []
         
         try:
-            # We 'invoke' the chain, passing in the user's question
-            response = self.chain.invoke({"question": question})
+            # We 'invoke' the chain, passing in the user's question and history
+            response = self.chain.invoke({
+                "question": question,
+                "chat_history": chat_history
+            })
             return response.content.strip()
         except Exception as e:
             return f"❌ SQL Generation Error: {str(e)}"
@@ -85,10 +91,10 @@ class SQLAgent:
         except Exception as e:
             return f"❌ Fix Generation Error: {str(e)}"
 
-    def ask(self, question: str, max_retries: int = 3) -> str:
+    def ask(self, question: str, chat_history: list = None, max_retries: int = 3) -> str:
         """The Complete Loop: Question -> SQL -> Data -> Answer."""
         # 1. Generate the 'Ticket' (SQL)
-        sql = self.generate_sql(question)
+        sql = self.generate_sql(question, chat_history)
         
         results = None
         
@@ -130,7 +136,7 @@ if __name__ == "__main__":
     agent = SQLAgent()
     
     test_question = "What is the total sales volume for Studios in JVC from 2022?"
-    report, df = agent.ask(test_question)
+    report, df = agent.ask(test_question, chat_history=[])
     
     print("\n--- FINAL ANSWER ---")
     print(report)

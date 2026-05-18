@@ -199,6 +199,8 @@ if "messages" not in st.session_state:
     st.session_state.messages = [
         {"role": "assistant", "content": "Welcome to Lumina AI. I provide institutional-grade analysis on the Dubai Real Estate market."}
     ]
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
 # --- Plotly Theme & Layout ---
 def get_plotly_layout():
@@ -325,41 +327,63 @@ with col1:
 
 # --- Right Column: Chat Interface & Analytics ---
 with col2:
-    prompt = st.chat_input("Query the market...")
+    # Create a container for messages to keep them above the input box
+    chat_placeholder = st.container()
     
+    # Get prompt suggestion if any
+    prompt_suggestion = None
     if getattr(st.session_state, 'prompt_suggestion', None):
-        prompt = st.session_state.prompt_suggestion
+        prompt_suggestion = st.session_state.prompt_suggestion
         del st.session_state.prompt_suggestion
-        
-    if prompt:
-        # Clear history to create a dashboard feel (replaces old output)
-        st.session_state.messages = [{"role": "user", "content": prompt}]
 
-    # 1. Render Current State
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
-            
-            if "raw_df" in message and message["raw_df"] is not None:
-                df = message["raw_df"]
-                render_kpi_metrics(df)
-                render_dynamic_chart(df)
+    # Render the chat input box at the bottom of the column
+    prompt = st.chat_input("Query the market...")
+    if prompt_suggestion:
+        prompt = prompt_suggestion
 
-    # 2. Process New Query
-    if prompt:
-        with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-            
-            with st.spinner('Synthesizing DLD data...'):
-                report, df = agent.ask(prompt)
+    # Render existing messages inside the placeholder container
+    with chat_placeholder:
+        for message in st.session_state.messages:
+            with st.chat_message(message["role"]):
+                st.markdown(message["content"])
                 
-                message_placeholder.markdown(report)
-                render_kpi_metrics(df)
-                render_dynamic_chart(df)
+                if "raw_df" in message and message["raw_df"] is not None:
+                    df = message["raw_df"]
+                    render_kpi_metrics(df)
+                    render_dynamic_chart(df)
 
-            # Save the response to state so it persists on next rerun
-            st.session_state.messages.append({
-                "role": "assistant", 
-                "content": report, 
-                "raw_df": df
-            })
+    # Process new query and inject it inside the container dynamically
+    if prompt:
+        # Append to visual messages list
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        
+        with chat_placeholder:
+            # Render user query immediately above the input box
+            with st.chat_message("user"):
+                st.markdown(prompt)
+                
+            # Render assistant answer
+            with st.chat_message("assistant"):
+                message_placeholder = st.empty()
+                
+                with st.spinner('Synthesizing DLD data...'):
+                    # Pass the hidden brain state (chat_history) to the agent
+                    report, df = agent.ask(prompt, chat_history=st.session_state.chat_history)
+                    
+                    message_placeholder.markdown(report)
+                    render_kpi_metrics(df)
+                    render_dynamic_chart(df)
+                    
+        # Append response to messages list for persistence
+        st.session_state.messages.append({
+            "role": "assistant", 
+            "content": report, 
+            "raw_df": df
+        })
+        
+        # Save to brain state memory
+        st.session_state.chat_history.append(("user", prompt))
+        st.session_state.chat_history.append(("assistant", report))
+        
+        # Rerun to sync everything
+        st.rerun()
