@@ -1,5 +1,5 @@
 """
-Production ETL Pipeline — Dubai Real Estate Transactions
+End-to-End ETL Pipeline — Dubai Real Estate Transactions
 =========================================================
 This pipeline processes the full DLD Transactions CSV and loads
 it into a DuckDB database for the AI Agent to query.

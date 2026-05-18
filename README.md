@@ -1,6 +1,6 @@
 # Lumina: AI-Powered Dubai Real Estate Data Pipeline & Analytics Terminal
 
-Lumina is an end-to-end data engineering and analytics project built to demonstrate how modern AI can interface with large-scale datasets. As a Master's graduate in Data Analytics & AI, my goal was to build a production-grade system from the ground up—handling everything from raw data extraction and ETL to prompt engineering and building an autonomous text-to-SQL agent.
+Lumina is an end-to-end data engineering and analytics project built to demonstrate how modern AI can interface with large-scale datasets. As a Master's graduate in Data Analytics & AI, my goal was to build a fully functional, end-to-end system from the ground up—handling everything from raw data extraction and ETL to prompt engineering and building an autonomous text-to-SQL agent.
 
 This project synthesizes over **1 Million official Dubai Land Department (DLD) transaction records** with real-time rental listings, turning raw data into actionable investment intelligence through a custom-built Streamlit dashboard.
 
