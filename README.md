@@ -13,9 +13,10 @@ Instead of relying on heavy ORMs or generic out-of-the-box AI wrappers, I focuse
 
 1. **Robust ETL Pipeline**: I built a Python-based pipeline to clean, normalize, and merge massive datasets. This included handling missing values, standardizing community names using regex and string manipulation, and ensuring data integrity before loading.
 2. **Choosing DuckDB**: To handle over 1 million records with sub-second analytical query performance, I chose DuckDB over traditional databases like PostgreSQL. Its columnar nature and in-memory execution made it the perfect backend for an AI-driven analytics dashboard.
-3. **Custom Text-to-SQL Agent**: Instead of basic RAG, I engineered a LangChain-based agent that talks to the Groq API (Llama-3). The AI doesn't search text documents; it writes deterministic SQL to query the database. 
-4. **Advanced Prompt Engineering**: I designed the system prompts from scratch. I injected the exact DuckDB schema, explicitly mapped out financial logic (e.g., how to calculate Gross Rental Yield), and implemented strict boundaries to prevent hallucinations. The AI relies *only* on the hard data it pulls from the database.
-5. **Interactive Data Visualization**: I replaced static tables with a custom-styled Streamlit dashboard, integrating automated KPI metrics and dynamic Plotly Express charts to provide a true Business Intelligence (BI) experience.
+3. **Conversational SQL Agent**: Instead of basic stateless RAG, I engineered a LangChain-based agent with **full multi-turn conversational memory** using `MessagesPlaceholder`. It maintains context across queries, letting users ask natural follow-up questions (e.g., "What about just for apartments?").
+4. **Autonomous Self-Correction Loop**: I built a self-healing debugger into the query cycle. If DuckDB returns a syntax error, the agent catches it, sends the raw traceback back to Llama-3, and self-corrects the SQL in real time before returning a response (supporting up to 3 retries).
+5. **Institutional Analytical Framework**: The agent acts as a lead real estate investment analyst. It uses a structured prompt layout to generate high-conviction macro theses, quantitative comparative tables, risk/yield analyses, and targeted investor profile suggestions ("Yield Seekers" vs. "Capital Safety Buyers").
+6. **Premium ChatGPT-style UX**: I customized the Streamlit rendering flow using `st.container()` to keep the chat input locked securely at the bottom of the viewport, scrolling Plotly visualizations and automated KPI cards dynamically above it.
 
 ## Tech Stack
 
